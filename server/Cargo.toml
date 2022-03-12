@@ -14,6 +14,7 @@ default = ["console_error_panic_hook"]
 wasm-bindgen = "0.2.63"
 wasm-bindgen-futures = "0.4.29"
 async-std = "1.10.0"
+futures = "0.3.21"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
