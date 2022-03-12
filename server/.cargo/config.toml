@@ -1,0 +1,3 @@
+[build]
+# We need to compile to web assembly
+target = "wasm32-unknown-unknown"
