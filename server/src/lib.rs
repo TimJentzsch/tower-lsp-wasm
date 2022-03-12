@@ -1,5 +1,6 @@
 mod utils;
 
+use async_std::task;
 use wasm_bindgen::prelude::*;
 
 use tower_lsp::jsonrpc::Result;
@@ -34,11 +35,12 @@ impl LanguageServer for Backend {
 }
 
 #[wasm_bindgen]
-#[tokio::main]
 pub async fn main() {
-    let stdin = tokio::io::stdin();
-    let stdout = tokio::io::stdout();
-
+    let stdin = async_std::io::stdin();
+    let stdout = async_std::io::stdout();
     let (service, socket) = LspService::new(|client| Backend { client });
-    Server::new(stdin, stdout, socket).serve(service).await;
+
+    task::block_on(async {
+        Server::new(stdin, stdout, socket).serve(service).await;
+    })
 }
