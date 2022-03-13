@@ -1,8 +1,9 @@
+mod io;
 mod utils;
 
-use utils::{stdin, stdout};
-use wasm_bindgen::prelude::*;
 use async_std::task;
+use io::{stdin, stdout};
+use wasm_bindgen::prelude::*;
 
 use tower_lsp::jsonrpc::Result;
 use tower_lsp::lsp_types::*;
