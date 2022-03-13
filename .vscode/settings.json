@@ -3,8 +3,10 @@
   "editor.tabSize": 2,
   "files.eol": "\n",
   "files.exclude": {
+    "client/package-lock.json": true,
+    "client/node_modules": true,
     "server/Cargo.lock": true,
     "server/target": true,
-    "client/package-lock.json": true
+    "server/pkg": true
   }
 }
