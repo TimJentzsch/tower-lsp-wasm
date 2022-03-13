@@ -36,7 +36,7 @@ impl LanguageServer for Backend {
 }
 
 #[wasm_bindgen]
-pub async fn main() {
+pub fn main() {
     let (service, socket) = LspService::new(|client| Backend { client });
     let stdin = stdin();
     let stdout = stdout();
