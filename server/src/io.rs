@@ -1,5 +1,5 @@
 use std::{
-    io::Result,
+    io::{Result, Write},
     pin::Pin,
     str,
     task::{Context, Poll},
@@ -18,13 +18,43 @@ pub fn stdout() -> Stdout {
 
 pub struct Stdin;
 
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["process", "stdin"])]
+    fn once(event: &str, cb: &dyn Fn());
+    #[wasm_bindgen(js_namespace = ["process", "stdin"])]
+    fn read() -> Option<String>;
+}
+
 impl AsyncRead for Stdin {
     fn poll_read(
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
-        buf: &mut [u8],
+        mut buf: &mut [u8],
     ) -> Poll<Result<usize>> {
-        todo!()
+        let mut res = "".to_owned();
+
+        // Try to read as much from stdin as possible
+        while let Some(s) = read() {
+            res += &s;
+        }
+
+        if res.len() > 0 {
+            // We read something, write it to the buffer
+            write!(buf, "{}", res).unwrap();
+            Poll::Ready(Ok(res.len()))
+        } else {
+            // There's nothing to read yet
+            // Listen on stdin for something to become available
+            let cb = || {
+                cx.waker().wake_by_ref();
+            };
+            // We must use `stdin.once` instead of `stdin.on`.
+            // The closure is allocated on the stack and can only be called once.
+            // See https://rustwasm.github.io/docs/wasm-bindgen/reference/passing-rust-closures-to-js.html#stack-lifetime-closures
+            once("readable", &cb);
+            Poll::Pending
+        }
     }
 }
 
