@@ -16,7 +16,8 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-  // The server is implemented in node
+  // We start the main.js file in the server folder
+  // This wrapper file then executes the server compiled to WASM
   const serverModule = context.asAbsolutePath(
     path.join("..", "server", "main.js")
   );
@@ -24,8 +25,7 @@ export function activate(context: ExtensionContext) {
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
   const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
-  // If the extension is launched in debug mode then the debug server options are used
-  // Otherwise the run options are used
+  // We use Stdio as transport mode to use node's std for the communication
   const serverOptions: ServerOptions = {
     run: { module: serverModule, transport: TransportKind.stdio },
     debug: {
