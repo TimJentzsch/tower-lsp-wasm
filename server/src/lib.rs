@@ -1,5 +1,4 @@
 mod io;
-mod utils;
 
 use async_std::task;
 use io::{stdin, stdout};
