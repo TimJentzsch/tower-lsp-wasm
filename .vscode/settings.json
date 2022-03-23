@@ -5,6 +5,7 @@
   "files.exclude": {
     "client/package-lock.json": true,
     "client/node_modules": true,
+    "client/out": true,
     "server/Cargo.lock": true,
     "server/target": true,
     "server/pkg": true
