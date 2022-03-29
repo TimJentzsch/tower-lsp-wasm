@@ -1,12 +1,10 @@
-mod io;
-
 use async_std::task;
-use io::{stdin, stdout};
 use wasm_bindgen::prelude::*;
 
 use tower_lsp::jsonrpc::Result;
 use tower_lsp::lsp_types::*;
 use tower_lsp::{Client, LanguageServer, LspService, Server};
+use ws_stream_wasm::{WsMeta, WsStream};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global allocator.
 #[cfg(feature = "wee_alloc")]
@@ -57,13 +55,13 @@ impl LanguageServer for Backend {
     }
 }
 
-#[wasm_bindgen]
+//#[wasm_bindgen]
 pub fn main() {
     let (service, socket) = LspService::new(|client| Backend { client });
-    let stdin = stdin();
-    let stdout = stdout();
 
     task::block_on(async {
-        Server::new(stdin, stdout, socket).serve(service).await;
+        let (_, stream) = WsMeta::connect("127.0.0.1:5007", None).await.unwrap();
+        let io = stream.into_io();
+        Server::new(io, io, socket).serve(service).await;
     })
 }
